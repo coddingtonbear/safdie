@@ -5,8 +5,9 @@ from typing import Dict
 from typing import Iterable
 from typing import List
 from typing import Optional
-from typing import Protocol
 from typing import Type
+
+from typing_extensions import Protocol
 
 from . import finder
 from .command import BaseCommand
