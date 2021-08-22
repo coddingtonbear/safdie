@@ -1,6 +1,12 @@
 import argparse
-from typing import Any, Dict, List, Type, Optional, Protocol, Iterable
 import sys
+from typing import Any
+from typing import Dict
+from typing import Iterable
+from typing import List
+from typing import Optional
+from typing import Protocol
+from typing import Type
 
 from .command import BaseCommand
 from .finder import get_entrypoints
@@ -26,7 +32,7 @@ class FullerRunner:
     def __init__(
         self,
         entrypoint_name: str,
-        cmd_class: Type[BaseCommand],
+        cmd_class: Type[BaseCommand] = BaseCommand,
         parser: Optional[ArgparseProtocol] = None,
     ):
         self._entrypoint_name = entrypoint_name
