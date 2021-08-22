@@ -75,7 +75,7 @@ class FullerRunner:
         init_args: Optional[Iterable[Any]] = None,
         init_kwargs: Optional[Dict[str, Any]] = None,
         handle_args: Optional[Iterable[Any]] = None,
-        handle_kwargs: Optional[Dict[str, Any]] = None
+        handle_kwargs: Optional[Dict[str, Any]] = None,
     ) -> Any:
         if init_args is None:
             init_args = []
@@ -87,7 +87,9 @@ class FullerRunner:
             handle_kwargs = {}
 
         cls = self.get_command_class_for_parsed_args(args)
-        return cls(args, *init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
+        return cls(args, *init_args, **init_kwargs).handle(
+            *handle_args, **handle_kwargs
+        )
 
     def run(
         self,
@@ -95,7 +97,7 @@ class FullerRunner:
         init_args: Optional[Iterable[Any]] = None,
         init_kwargs: Optional[Dict[str, Any]] = None,
         handle_args: Optional[Iterable[Any]] = None,
-        handle_kwargs: Optional[Dict[str, Any]] = None
+        handle_kwargs: Optional[Dict[str, Any]] = None,
     ) -> Any:
         args = self.parse_args(argv)
         self.run_command_for_parsed_args(

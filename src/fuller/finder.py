@@ -22,9 +22,7 @@ T = TypeVar("T")
 
 def get_entrypoints(entrypoint_name: str, cls: Type[T]) -> Dict[str, Type[T]]:
     possible_commands: Dict[str, Type[T]] = {}
-    for entry_point in pkg_resources.iter_entry_points(
-        group=entrypoint_name
-    ):
+    for entry_point in pkg_resources.iter_entry_points(group=entrypoint_name):
         try:
             loaded_class = entry_point.load()
         except ImportError:
