@@ -26,7 +26,10 @@ setup(
     name="fuller",
     version="0.1.0",
     license="MIT",
-    description="Easily make your app extensible by you or others via use of setuptools entrypoints.",
+    description=(
+        "Easily make your app extensible by you or others via use of "
+        "setuptools entrypoints."
+    ),
     long_description_content_type="text/markdown",
     long_description="%s"
     % (
@@ -43,7 +46,8 @@ setup(
     include_package_data=True,
     zip_safe=False,
     classifiers=[
-        # complete classifier list: http://pypi.python.org/pypi?%3Aaction=list_classifiers
+        # complete classifier list:
+        # http://pypi.python.org/pypi?%3Aaction=list_classifiers
         "Development Status :: 5 - Production/Stable",
         "Intended Audience :: Developers",
         "License :: OSI Approved :: MIT License",
@@ -66,7 +70,6 @@ setup(
         "Topic :: Utilities",
     ],
     project_urls={
-        "Changelog": "https://github.com/coddingtonbear/fuller/blob/master/CHANGELOG.md",
         "Issue Tracker": "https://github.com/coddingtonbear/fuller/issues",
     },
     keywords=[
