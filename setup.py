@@ -23,7 +23,7 @@ def read(*names, **kwargs):
 
 
 setup(
-    name="fuller",
+    name="safdie",
     version="1.0.0",
     license="MIT",
     description=(
@@ -39,7 +39,7 @@ setup(
     ),
     author="Adam Coddington",
     author_email="me@adamcoddington.net",
-    url="https://github.com/coddingtonbear/fuller",
+    url="https://github.com/coddingtonbear/safdie",
     packages=find_packages("src"),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
@@ -70,7 +70,7 @@ setup(
         "Topic :: Utilities",
     ],
     project_urls={
-        "Issue Tracker": "https://github.com/coddingtonbear/fuller/issues",
+        "Issue Tracker": "https://github.com/coddingtonbear/safdie/issues",
     },
     keywords=[
         # eg: 'keyword1', 'keyword2', 'keyword3',

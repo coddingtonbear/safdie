@@ -1,4 +1,4 @@
-# Fuller
+# Safdie
 
 Easily make your app extensible by you or others via use of setuptools entrypoints.
 
@@ -9,14 +9,14 @@ I've written roughly the same module system for ten or so command-line apps over
 ## Installation
 
 ```
-pip install fuller
+pip install safdie
 ```
 
 You can also install the in-development version with:
 
 ```
 
-pip install https://github.com/coddingtonbear/fuller/archive/master.zip
+pip install https://github.com/coddingtonbear/safdie/archive/master.zip
 
 ```
 
@@ -24,11 +24,11 @@ pip install https://github.com/coddingtonbear/fuller/archive/master.zip
 
 The below example isn't particularly useful, but does demonstrate a fully-working use of this.
 
-1. Create your commands as subclasses of `fuller.BaseCommand` and write whatever command classes you need:
+1. Create your commands as subclasses of `safdie.BaseCommand` and write whatever command classes you need:
 
 ```python
 # Module Path: my_app.commands
-from fuller import BaseCommand
+from safdie import BaseCommand
 
 class MyCommand(BaseCommand):
     def handle(self):
@@ -40,11 +40,11 @@ class MyCommand(BaseCommand):
 
 ```python
 # Module Path: my_app.cli
-from fuller import FullerRunner, BaseCommand
+from safdie import SafdieRunner, BaseCommand
 
 def main():
     # This will look up the command and run it's `handle` function.
-    FullerRunner("myapp.commands").run()
+    SafdieRunner("myapp.commands").run()
 
 ```
 
@@ -72,7 +72,7 @@ Now you can run `my_command_line_app somecommand` to execute your function.
 
 ### Customizing your argument parser
 
-By default, Fuller will generate a new argument parser for you, but maybe you want to use `Gooey` or just want to add a few arguments of your own to the parser?  If so -- you can provide your own argument parser:
+By default, Safdie will generate a new argument parser for you, but maybe you want to use `Gooey` or just want to add a few arguments of your own to the parser?  If so -- you can provide your own argument parser:
 
 ```python
 from argparse import ArgumentParser
@@ -81,7 +81,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--something", action="store_true')
 
-    FullerRunner("myapp.commands", parser=parser).run()
+    SafdieRunner("myapp.commands", parser=parser).run()
 ```
 
 ### Performing work between parsing args and executing a command
@@ -95,7 +95,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--debugger", action="store_true')
 
-    runner = FullerRunner("myapp.commands", parser=parser)
+    runner = SafdieRunner("myapp.commands", parser=parser)
     args = runner.parse_args()
 
     if args.debugger:
@@ -113,7 +113,7 @@ In the below example, you have your own command subclass that requires an additi
 
 ```python
 # Module Path: my_app.commands
-from fuller import BaseCommand
+from safdie import BaseCommand
 
 class MyAppCommandBase(BaseCommand):
     def __init__(self, some_additional_init_param, *args, **kwargs):
@@ -129,7 +129,7 @@ class MyCommand(MyAppBaseCommand):
 from .commands import MyAppCommandBase
 
 def main():
-    runner = FullerRunner("myapp.commands", cmd_class=MyAppCommandBase)
+    runner = SafdieRunner("myapp.commands", cmd_class=MyAppCommandBase)
     args = runner.parse_args()
 
     some_value_i_want_to_pass = "Arbitrary"
@@ -144,6 +144,6 @@ def main():
     )
 ```
 
-## Why is this named 'Fuller'?
+## Why is this named 'Safdie'?
 
-One of the many things [Buckminster Fuller](https://en.wikipedia.org/wiki/Buckminster_Fuller) was known for was inventing *modular* housing.
+You've probably seen at least a few photos of the famous building named [Habitat 67](https://en.wikipedia.org/wiki/Habitat_67). [Moshe Safdie](https://en.wikipedia.org/wiki/Moshe_Safdie) is the man who designed it.

@@ -24,7 +24,7 @@ class ArgparseProtocol(Protocol):
         ...
 
 
-class FullerRunner:
+class SafdieRunner:
     _entrypoint_name: str
     _cmd_class: Type[BaseCommand]
     _parser: ArgparseProtocol

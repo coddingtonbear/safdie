@@ -12,11 +12,11 @@ class TestRunner(TestCase):
         self.arbitrary_entrypoints = {}
         super().setUp()
 
-    def _get_runner(self, **kwargs) -> command_runner.FullerRunner:
-        with patch("fuller.finder.get_entrypoints") as get_entrypoints:
+    def _get_runner(self, **kwargs) -> command_runner.SafdieRunner:
+        with patch("safdie.finder.get_entrypoints") as get_entrypoints:
             get_entrypoints.return_value = self.arbitrary_entrypoints
 
-            cmd = command_runner.FullerRunner(self.arbitrary_entrypoint_name, **kwargs)
+            cmd = command_runner.SafdieRunner(self.arbitrary_entrypoint_name, **kwargs)
 
         return cmd
 

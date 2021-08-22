@@ -7,7 +7,6 @@ from typing import TypeVar
 
 import pkg_resources
 
-
 logger = logging.getLogger(__name__)
 
 
