@@ -40,8 +40,11 @@ class FullerRunner:
 
     def parse_args(
         self,
-        argv: List[str] = sys.argv,
+        argv: List[str] = None,
     ) -> argparse.Namespace:
+        if argv is None:
+            argv = sys.argv[1:]
+
         subparsers = self._parser.add_subparsers(dest="command")
         subparsers.required = True
 
@@ -55,7 +58,7 @@ class FullerRunner:
             subparser = subparsers.add_parser(cmd_name, **parser_kwargs)
             cmd_class.add_arguments(subparser)
 
-        return self._parser.parse_args(argv[1:])
+        return self._parser.parse_args(argv)
 
     def get_command_class_for_parsed_args(
         self, args: argparse.Namespace
@@ -66,9 +69,9 @@ class FullerRunner:
         args = self.parse_args(argv)
         return self.get_command_class_for_parsed_args(args)
 
-    def run(
+    def run_command_for_parsed_args(
         self,
-        argv: List[str] = sys.argv,
+        args: argparse.Namespace,
         init_args: Optional[Iterable[Any]] = None,
         init_kwargs: Optional[Dict[str, Any]] = None,
         handle_args: Optional[Iterable[Any]] = None,
@@ -83,5 +86,18 @@ class FullerRunner:
         if handle_kwargs is None:
             handle_kwargs = {}
 
-        cls = self.get_command_class(argv)
-        return cls(*init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
+        cls = self.get_command_class_for_parsed_args(args)
+        return cls(args, *init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
+
+    def run(
+        self,
+        argv: List[str] = sys.argv,
+        init_args: Optional[Iterable[Any]] = None,
+        init_kwargs: Optional[Dict[str, Any]] = None,
+        handle_args: Optional[Iterable[Any]] = None,
+        handle_kwargs: Optional[Dict[str, Any]] = None
+    ) -> Any:
+        args = self.parse_args(argv)
+        self.run_command_for_parsed_args(
+            args, init_args, init_kwargs, handle_args, handle_kwargs
+        )
