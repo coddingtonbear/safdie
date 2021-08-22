@@ -77,6 +77,7 @@ setup(
     ],
     python_requires=">=3.6",
     install_requires=[
+        "typing-extensions",
         # eg: 'aspectlib==1.1.1', 'six>=1.7',
     ],
     extras_require={
