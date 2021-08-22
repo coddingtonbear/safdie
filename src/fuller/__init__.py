@@ -3,4 +3,4 @@ from .command import BaseCommand
 from .command_runner import FullerRunner
 
 
-__version__ = "0.1.0"
+__version__ = "1.0.0"

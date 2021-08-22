@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name="fuller",
-    version="0.1.0",
+    version="1.0.0",
     license="MIT",
     description=(
         "Easily make your app extensible by you or others via use of "
