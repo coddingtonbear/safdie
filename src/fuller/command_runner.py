@@ -8,8 +8,8 @@ from typing import Optional
 from typing import Protocol
 from typing import Type
 
+from . import finder
 from .command import BaseCommand
-from .finder import get_entrypoints
 
 
 class ArgparseProtocol(Protocol):
@@ -37,7 +37,7 @@ class FullerRunner:
     ):
         self._entrypoint_name = entrypoint_name
         self._cmd_class = cmd_class
-        self._commands = get_entrypoints(self._entrypoint_name, self._cmd_class)
+        self._commands = finder.get_entrypoints(self._entrypoint_name, self._cmd_class)
 
         if parser:
             self._parser = parser
