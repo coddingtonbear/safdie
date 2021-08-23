@@ -94,11 +94,12 @@ By default, Safdie will generate a new argument parser for you, but maybe you wa
 
 ```python
 from gooey import GooeyParser, Gooey
+from safdie import SafdieRunner
 
 
 @Gooey
 def main():
-    MyRunner("myapp.commands", parser_class=GooeyParser).run()
+    SafdieRunner("myapp.commands", parser_class=GooeyParser).run()
 ```
 
 ### Doing something before executing a command
@@ -139,7 +140,7 @@ class MyRunner(SafdieRunner):
 
 
 def main():
-    SafdieRunner("myapp.commands").run()
+    MyRunner("myapp.commands").run()
 ```
 
 ### Using your own command subclass
@@ -150,10 +151,12 @@ In the below example, you have your own command subclass that requires an additi
 # Module Path: my_app.commands
 from safdie import BaseCommand
 
+
 class MyAppCommandBase(BaseCommand):
     def __init__(self, some_additional_init_param, *args, **kwargs):
         # Do something with `some_additional_init_param
         super().__init__(*args, **kwargs)
+
 
 class MyCommand(MyAppBaseCommand):
     def handle(self):
@@ -192,7 +195,7 @@ class MyRunner(SafdieRunner):
         )
 
 def main():
-    runner = MyRunner("myapp.commands", cmd_class=MyAppCommandBase).run()
+    MyRunner("myapp.commands", cmd_class=MyAppCommandBase).run()
 ```
 
 ## Why is this named 'Safdie'?
