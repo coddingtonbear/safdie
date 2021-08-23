@@ -4,7 +4,7 @@ import argparse
 class BaseCommand:
     _options: argparse.Namespace
 
-    def __init__(self, options: argparse.Namespace, *args, **kwargs):
+    def __init__(self, *args, options: argparse.Namespace, **kwargs):
         self._options: argparse.Namespace = options
         super().__init__()
 

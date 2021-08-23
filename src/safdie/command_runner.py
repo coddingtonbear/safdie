@@ -93,10 +93,15 @@ class SafdieRunner:
         if handle_kwargs is None:
             handle_kwargs = {}
 
+        if "options" in init_kwargs:
+            raise ValueError(
+                "Keyword-argument 'options' is provided by "
+                "Safdie and cannot be provided by the caller."
+            )
+        init_kwargs["options"] = args
+
         cls = self.get_command_class_for_parsed_args(args)
-        return cls(args, *init_args, **init_kwargs).handle(
-            *handle_args, **handle_kwargs
-        )
+        return cls(*init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
 
     def run(
         self,

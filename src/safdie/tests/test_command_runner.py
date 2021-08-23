@@ -1,6 +1,9 @@
 import argparse
 from unittest import TestCase
+from unittest.mock import Mock
 from unittest.mock import patch
+
+from pytest import raises
 
 from .. import command_runner
 
@@ -31,3 +34,10 @@ class TestRunner(TestCase):
         cmd = self._get_runner()
 
         assert "arbitrary" in cmd._commands
+
+    def test_raises_error_if_options_provided(self):
+        args = Mock(spec=argparse.Namespace)
+        cmd = self._get_runner()
+
+        with raises(ValueError):
+            cmd.run_command_for_parsed_args(args, init_kwargs={"options": args})
