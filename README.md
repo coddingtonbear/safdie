@@ -70,41 +70,76 @@ Now you can run `my_command_line_app somecommand` to execute your function.
 
 ## Tips
 
-### Customizing your argument parser
+### Adding arguments
 
-By default, Safdie will generate a new argument parser for you, but maybe you want to use `Gooey` or just want to add a few arguments of your own to the parser?  If so -- you can provide your own argument parser:
+Maybe you want to add a command-line flag to your app; you can add those by subclassing `SafdieRunner` and defining an override for `add_arguments` as shown below:
 
 ```python
 from argparse import ArgumentParser
+from safdie import SafdieRunner
+
+
+class MyRunner(SafdieRunner):
+    def add_arguments(self, parser: ArgumentParser) -> None:
+        parser.add_argument("--something", action="store_true")
+
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--something", action="store_true')
-
-    SafdieRunner("myapp.commands", parser=parser).run()
+    MyRunner("myapp.commands").run()
 ```
 
-### Performing work between parsing args and executing a command
+### Customizing your argument parser
+
+By default, Safdie will generate a new argument parser for you, but maybe you want to use `Gooey` or some other Argparse-compatible parser?  You can provide the class to use for generating the argument parser by specifying the `parser_class` command-line argument:
+
+```python
+from gooey import GooeyParser, Gooey
+
+
+@Gooey
+def main():
+    MyRunner("myapp.commands", parser_class=GooeyParser).run()
+```
+
+### Doing something before executing a command
 
 Maybe you want to be able to optionally start a debugger between parsing args and executing the command?
 
 ```python
-from argparse import ArgumentParser
+import argparse
+from safdie import SafdieRunner
+from typing import Any, Dict, Iterable
+
+
+class MyRunner(SafdieRunner):
+    def add_arguments(self, parser: ArgumentParser) -> None:
+        parser.add_argument("--debugger", action="store_true')
+
+    def handle(
+        self,
+        args: argparse.Namespace,
+        init_args: Iterable[Any],
+        init_kwargs: Dict[str, Any],
+        handle_args: Iterable[Any],
+        handle_kwargs: Dict[str, Any],
+    ) -> Any:
+        if args.debugger:
+            import debugpy
+
+            debugpy.listen(("0.0.0.0", 5678))
+            debugpy.wait_for_client()
+
+        super().handle(
+            args,
+            init_args,
+            init_kwargs,
+            handle_args,
+            handle_kwargs
+        )
+
 
 def main():
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--debugger", action="store_true')
-
-    runner = SafdieRunner("myapp.commands", parser=parser)
-    args = runner.parse_args()
-
-    if args.debugger:
-        import debugpy
-
-        debugpy.listen(("0.0.0.0", 5678))
-        debugpy.wait_for_client()
-
-    runner.run_command_for_parsed_args(args)
+    SafdieRunner("myapp.commands").run()
 ```
 
 ### Using your own command subclass
@@ -126,22 +161,38 @@ class MyCommand(MyAppBaseCommand):
 ```
 
 ```python
+from typing import Any, Dict, Iterable
+
+from safdie import SafdieRunner
+
 from .commands import MyAppCommandBase
 
+
+class MyRunner(SafdieRunner):
+    def handle(
+        self,
+        args: argparse.Namespace,
+        init_args: Iterable[Any],
+        init_kwargs: Dict[str, Any],
+        handle_args: Iterable[Any],
+        handle_kwargs: Dict[str, Any],
+    ) -> Any:
+        some_value_i_want_to_pass = "Arbitrary"
+
+        init_kwargs['some_additional_init_param'] = (
+            some_value_i_want_to_pass
+        )
+
+        super().handle(
+            args,
+            init_args,
+            init_kwargs,
+            handle_args,
+            handle_kwargs
+        )
+
 def main():
-    runner = SafdieRunner("myapp.commands", cmd_class=MyAppCommandBase)
-    args = runner.parse_args()
-
-    some_value_i_want_to_pass = "Arbitrary"
-
-    runner.run_command_for_parsed_args(
-        args,
-        init_kwargs={
-            'some_additional_init_param': some_value_i_want_to_pass,
-        },
-        # Note that also `init_args`, `handle_args`, and `handle_kwargs`
-        # also exist for extra flexibility.
-    )
+    runner = MyRunner("myapp.commands", cmd_class=MyAppCommandBase).run()
 ```
 
 ## Why is this named 'Safdie'?

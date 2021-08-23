@@ -7,52 +7,32 @@ from typing import List
 from typing import Optional
 from typing import Type
 
-from typing_extensions import Protocol
-
 from . import finder
 from .command import BaseCommand
-
-
-class ArgparseProtocol(Protocol):
-    def add_argument(self, *args, **kwargs):
-        ...
-
-    def add_subparsers(self, *, dest: str) -> Any:
-        ...
-
-    def parse_args(self, args: List[str]):
-        ...
 
 
 class SafdieRunner:
     _entrypoint_name: str
     _cmd_class: Type[BaseCommand]
-    _parser: ArgparseProtocol
+    _parser: argparse.ArgumentParser
     _commands: Dict[str, Type[BaseCommand]]
 
     def __init__(
         self,
         entrypoint_name: str,
         cmd_class: Type[BaseCommand] = BaseCommand,
-        parser: Optional[ArgparseProtocol] = None,
+        parser_class=argparse.ArgumentParser,
     ):
         self._entrypoint_name = entrypoint_name
         self._cmd_class = cmd_class
         self._commands = finder.get_entrypoints(self._entrypoint_name, self._cmd_class)
+        self._parser = parser_class()
 
-        if parser:
-            self._parser = parser
-        else:
-            self._parser = argparse.ArgumentParser()
+    def add_arguments(self, parser: argparse.ArgumentParser) -> None:
+        pass
 
-    def parse_args(
-        self,
-        argv: List[str] = None,
-    ) -> argparse.Namespace:
-        if argv is None:
-            argv = sys.argv[1:]
-
-        subparsers = self._parser.add_subparsers(dest="command")
+    def _add_subparser(self, parser: argparse.ArgumentParser) -> None:
+        subparsers = parser.add_subparsers(dest="command")
         subparsers.required = True
 
         for cmd_name, cmd_class in self._commands.items():
@@ -65,18 +45,31 @@ class SafdieRunner:
             subparser = subparsers.add_parser(cmd_name, **parser_kwargs)
             cmd_class.add_arguments(subparser)
 
+    def parse_args(
+        self,
+        argv: List[str] = None,
+    ) -> argparse.Namespace:
+        if argv is None:
+            argv = sys.argv[1:]
+
+        self.add_arguments(self._parser)
+        self._add_subparser(self._parser)
+
         return self._parser.parse_args(argv)
 
-    def get_command_class_for_parsed_args(
-        self, args: argparse.Namespace
-    ) -> Type[BaseCommand]:
-        return self._commands[args.command]
+    def handle(
+        self,
+        args: argparse.Namespace,
+        init_args: Iterable[Any],
+        init_kwargs: Dict[str, Any],
+        handle_args: Iterable[Any],
+        handle_kwargs: Dict[str, Any],
+    ) -> Any:
+        """Perform work you need to do before launching the command"""
+        cls = self._commands[args.command]
+        return cls(*init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
 
-    def get_command_class(self, argv: List[str] = sys.argv) -> Type[BaseCommand]:
-        args = self.parse_args(argv)
-        return self.get_command_class_for_parsed_args(args)
-
-    def run_command_for_parsed_args(
+    def _run_command_for_parsed_args(
         self,
         args: argparse.Namespace,
         init_args: Optional[Iterable[Any]] = None,
@@ -100,18 +93,17 @@ class SafdieRunner:
             )
         init_kwargs["options"] = args
 
-        cls = self.get_command_class_for_parsed_args(args)
-        return cls(*init_args, **init_kwargs).handle(*handle_args, **handle_kwargs)
+        return self.handle(args, init_args, init_kwargs, handle_args, handle_kwargs)
 
     def run(
         self,
-        argv: List[str] = sys.argv,
+        argv: Optional[List[str]] = None,
         init_args: Optional[Iterable[Any]] = None,
         init_kwargs: Optional[Dict[str, Any]] = None,
         handle_args: Optional[Iterable[Any]] = None,
         handle_kwargs: Optional[Dict[str, Any]] = None,
     ) -> Any:
         args = self.parse_args(argv)
-        self.run_command_for_parsed_args(
+        self._run_command_for_parsed_args(
             args, init_args, init_kwargs, handle_args, handle_kwargs
         )
