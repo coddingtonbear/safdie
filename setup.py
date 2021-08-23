@@ -24,7 +24,7 @@ def read(*names, **kwargs):
 
 setup(
     name="safdie",
-    version="1.0.0",
+    version="1.0.1",
     license="MIT",
     description=(
         "Easily make your app extensible by you or others via use of "
