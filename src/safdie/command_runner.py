@@ -36,18 +36,12 @@ class SafdieRunner:
         subparsers.required = True
 
         for cmd_name, cmd_class in self._commands.items():
-            parser_kwargs = {}
-
-            cmd_help = cmd_class.get_help()
-            if cmd_help:
-                parser_kwargs["help"] = cmd_help
-
-            subparser = subparsers.add_parser(cmd_name, **parser_kwargs)
+            subparser = subparsers.add_parser(cmd_name, help=cmd_class.get_help())
             cmd_class.add_arguments(subparser)
 
     def parse_args(
         self,
-        argv: List[str] = None,
+        argv: List[str] | None = None,
     ) -> argparse.Namespace:
         if argv is None:
             argv = sys.argv[1:]
